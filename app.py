@@ -11,7 +11,6 @@ import random
 import os
 from geopy.geocoders import Nominatim
 
-# --- 1. КОНФИГУРАЦИЯ ---
 GEMINI_KEYS = [
     "AIzaSyDEk-y_3RLifmLBzcRa-UepRRrEovQRcoU", 
     "AIzaSyCxSi9nIbZ4ccqhAwXyqTc3v3HGIJNlreQ",
@@ -25,7 +24,7 @@ TRAFFIC_DB_FILE = "traffic_db.csv"
 
 st.set_page_config(page_title="AUA | Antares Eco Monitor", page_icon="🍃", layout="wide")
 
-# --- 2. ИНИЦИАЛИЗАЦИЯ ПАМЯТИ ---
+
 if 'ai_response' not in st.session_state:
     st.session_state.ai_response = ""
 if 'last_lat' not in st.session_state:
@@ -35,7 +34,6 @@ if 'last_lon' not in st.session_state:
 if 'address' not in st.session_state:
     st.session_state.address = "Алматы, Казахстан"
 
-# --- 3. БОКОВАЯ ПАНЕЛЬ ---
 with st.sidebar:
     st.image("School.png", width=200, use_container_width=True) 
     st.markdown("<h3 style='text-align: center;'>Team: Antares</h3>", unsafe_allow_html=True)
@@ -45,9 +43,8 @@ with st.sidebar:
     st.write("---")
     st.info("Проект **AUA** — интеллектуальный мониторинг качества воздуха и дорожного трафика.")
 
-# --- 4. ДИНАМИЧЕСКИЙ ДИЗАЙН И ФОНЫ (CSS) ---
+
 if dark_mode:
-    # Темная тема: Луна/Ночное небо с затемняющим стеклом
     app_bg = """
         background-color: #060b14;
         background-image: 
@@ -65,7 +62,6 @@ if dark_mode:
     map_tiles = "cartodbdark_matter"
     box_shadow = "0 8px 32px 0 rgba(0,0,0,0.4)"
 else:
-    # Светлая тема: Листья с осветляющим стеклом
     app_bg = """
         background-color: #f8fafc;
         background-image: 
@@ -86,19 +82,11 @@ else:
 st.markdown(f"""
     <style>
     [data-testid="stHeader"] {{ background-color: transparent !important; }}
-    
-    /* Применяем наш фон к главному окну */
     .stApp {{ {app_bg} }}
-    
     p, span, label, li {{ color: {text_color} !important; }}
-    
-    /* Делаем сайдбар чуть прозрачным, чтобы фон слегка просвечивал */
     [data-testid="stSidebar"] {{ 
-        background-color: {card_bg} !important; 
-        backdrop-filter: blur(16px) saturate(180%); 
-        border-right: 1px solid {border_color}; 
+        background-color: {card_bg} !important; backdrop-filter: blur(16px) saturate(180%); border-right: 1px solid {border_color}; 
     }}
-    
     h1, h2, h3, h4, h5, h6 {{ color: {text_color} !important; font-weight: 700; letter-spacing: -0.5px; }}
     
     .main-title {{
@@ -127,7 +115,6 @@ st.markdown(f"""
     }}
     .stAlert p {{ font-size: 1.05rem; line-height: 1.7; }}
 
-    /* --- АДАПТИВНОСТЬ ДЛЯ ТЕЛЕФОНОВ --- */
     @media (max-width: 768px) {{
         .main-title {{ font-size: 2rem !important; text-align: center; }}
         div[data-testid="metric-container"] {{ padding: 15px !important; }}
@@ -137,7 +124,7 @@ st.markdown(f"""
     </style>
     """, unsafe_allow_html=True)
 
-# --- 5. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ---
+
 def get_address_name(lat, lon):
     try:
         geolocator = Nominatim(user_agent="antares_monitor")
@@ -246,7 +233,7 @@ def get_historical_data_with_db(lat, lon, current_traffic_score):
         "Пробки (Баллы)": traffic_list
     }).set_index("Время")
 
-# --- 6. ОСНОВНОЙ ИНТЕРФЕЙС ---
+
 st.markdown("<h1 class='main-title'>🍃 AUA: Эко-мониторинг</h1>", unsafe_allow_html=True)
 st.markdown(f"<p style='font-size: 1.2rem; opacity: 0.8; margin-bottom: 30px;'>Интеллектуальный анализ воздуха и трафика с накопительной базой данных.</p>", unsafe_allow_html=True)
 
@@ -287,10 +274,9 @@ with col_info:
     with st.spinner("Загрузка данных из локального Data Lake..."):
         df_history = get_historical_data_with_db(st.session_state.last_lat, st.session_state.last_lon, tr_raw)
     
-    tab1, tab2, tab3 = st.tabs(["🌫️ Пыль", "🚗 Пробки", "🍃 Воздух"])
-    with tab1: st.bar_chart(df_history["PM2.5 (Пыль)"], color="#ef4444") 
-    with tab2: st.area_chart(df_history["Пробки (Баллы)"], color="#eab308") 
-    with tab3: st.line_chart(df_history["AQI (Индекс)"], color="#10b981") 
+    # ВОТ ЗДЕСЬ ИЗМЕНЕНИЯ: Убрали вкладки и графики, оставили только Data (таблицу)
+    with st.expander("📊 Show data", expanded=True):
+        st.dataframe(df_history, use_container_width=True, height=320)
     
     st.write("") 
     if st.button("✨ Сгенерировать AI-отчет"):
