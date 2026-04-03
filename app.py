@@ -11,15 +11,13 @@ import random
 import os
 from geopy.geocoders import Nominatim
 
+
 GEMINI_KEYS = [
-    "AIzaSyDEk-y_3RLifmLBzcRa-UepRRrEovQRcoU", 
-    "AIzaSyCxSi9nIbZ4ccqhAwXyqTc3v3HGIJNlreQ",
-    "AIzaSyAZKoH6skdNeFfqhSd1qbAhlqZ7KuBkSH8",
-    "AIzaSyCEG-xqpCGN0FPFLBT27B__VxCrp_A7hEQ"
+    SECRET
 ]
 
-OWM_API_KEY = "344b0690c4fa6d089737fecdd877f41e"
-TOMTOM_API_KEY = "KvoDL6YpnbCZEZ9klIIGbHedofUvyMcB"
+OWM_API_KEY = "SECRET"
+TOMTOM_API_KEY = "Secret"
 TRAFFIC_DB_FILE = "traffic_db.csv"
 
 st.set_page_config(page_title="AUA | Antares Eco Monitor", page_icon="🍃", layout="wide")
@@ -33,6 +31,7 @@ if 'last_lon' not in st.session_state:
     st.session_state.last_lon = 76.9286
 if 'address' not in st.session_state:
     st.session_state.address = "Алматы, Казахстан"
+
 
 with st.sidebar:
     st.image("School.png", width=200, use_container_width=True) 
@@ -72,8 +71,9 @@ else:
         background-position: center;
     """
     text_color = "#0f172a"
+    green = "#64bc61"
     card_bg = "rgba(255, 255, 255, 0.85)"
-    border_color = "rgba(0, 0, 0, 0.08)"
+    border_color = "#64bc61"
     accent_color = "#059669" 
     gradient_text = "linear-gradient(45deg, #059669, #2563eb)"
     map_tiles = "cartodbpositron"
@@ -274,7 +274,7 @@ with col_info:
     with st.spinner("Загрузка данных из локального Data Lake..."):
         df_history = get_historical_data_with_db(st.session_state.last_lat, st.session_state.last_lon, tr_raw)
     
-    # ВОТ ЗДЕСЬ ИЗМЕНЕНИЯ: Убрали вкладки и графики, оставили только Data (таблицу)
+    
     with st.expander("📊 Show data", expanded=True):
         st.dataframe(df_history, use_container_width=True, height=320)
     
